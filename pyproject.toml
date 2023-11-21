@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "rabbitmq"
+version = "0.1.0"
+description = ""
+authors = ["Avikaielef <AS226877@greendreamteam.onmicrosoft.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+elasticsearch = "^8.11.0"
+pika = "^1.3.2"
+fastapi = "^0.104.1"
+calculator = {path = "calculator"}
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -1,0 +1,15 @@
+setup.py
+calculator.egg-info/PKG-INFO
+calculator.egg-info/SOURCES.txt
+calculator.egg-info/dependency_links.txt
+calculator.egg-info/top_level.txt
+operations/__init__.py
+operations/divide.py
+operations/multiply.py
+operations/subtract.py
+operations/sum.py
+tests/__init__.py
+tests/test_divide.py
+tests/test_multiply.py
+tests/test_subtract.py
+tests/test_sum.py

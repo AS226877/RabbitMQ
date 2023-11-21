@@ -1,0 +1,4 @@
+docker run -d --hostname my-rabbit --name some-rabbit -p 8080:15672 rabbitmq:3-management
+Management at localhost:8080
+uvicorn Sender:app --reload
+kubectl port-forward service/rabbitmq-service-fixed-port 5672:5672 15672:15672
