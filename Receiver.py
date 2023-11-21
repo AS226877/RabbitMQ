@@ -1,6 +1,5 @@
 import pika
 from datetime import datetime
-from operations import sum, subtract, multiply, divide
 
 #  from get_elasticsearch import get_elasticsearch_connection
 
@@ -33,16 +32,16 @@ def callback(ch, method, properties, body):
             num2 = float(num2)
 
             if operation.lower() == 'sum':
-                result = sum(num1, num2)
+                result = num1 + num2
                 text = f"{num1} + {num2} = {result}"
             elif operation.lower() == 'subtract':
-                result = subtract(num1, num2)
+                result = num1 - num2
                 text = f"{num1} - {num2} = {result}"
             elif operation.lower() == 'multiply':
-                result = multiply(num1, num2)
+                result = num1 * num2
                 text = f"{num1} * {num2} = {result}"
             elif operation.lower() == 'divide':
-                result = divide(num1, num2)
+                result = num1/ num2
                 text = f"{num1} / {num2} = {result}"
             else:
                 print(f"Unknown operation: {operation}")
