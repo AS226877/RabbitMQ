@@ -29,3 +29,8 @@ async def calculate(operation: str, num1: float, num2: float):
     send_message('operations', message)
 
     return {"message": "Calculation request sent to the receiver."}
+
+# If this file is meant to be run independently, you can start the FastAPI app
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="127.0.0.1", port=8000)
