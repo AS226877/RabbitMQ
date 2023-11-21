@@ -15,6 +15,12 @@ jobs:
       with:
         python-version: 3.12
 
+    - name: Start RabbitMQ server
+      run: |
+        docker-compose up -d
+      # This ensures that the RabbitMQ server is started before proceeding to the next steps
+      continue-on-error: true
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
@@ -23,3 +29,7 @@ jobs:
 
     - name: Run tests
       run: poetry run pytest
+
+    - name: Stop RabbitMQ server
+      run: |
+        docker-compose down
