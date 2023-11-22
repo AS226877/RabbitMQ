@@ -65,7 +65,7 @@ def callback(ch, method, properties, body):
 
 
 # Establish a connection to the RabbitMQ server
-connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq'))
 channel = connection.channel()
 
 # Declare the 'operations' queue
