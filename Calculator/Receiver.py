@@ -72,7 +72,7 @@ rabbitmq_host = os.getenv("RABBITMQ_HOST", "172.17.0.1")
 rabbitmq_port = int(os.getenv("RABBITMQ_PORT", 5672))
 
 # Establish connection
-connection = pika.BlockingConnection(pika.ConnectionParameters(rabbitmq_host, rabbitmq_port))
+connection = pika.BlockingConnection(pika.ConnectionParameters(host=rabbitmq_host, port=rabbitmq_port, socket_timeout=30, heartbeat=30))
 channel = connection.channel()
 
 # Declare the 'operations' queue
