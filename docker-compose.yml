@@ -4,21 +4,34 @@ services:
   fastapi:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.fastapi  # Specify the correct Dockerfile for FastAPI
     ports:
       - "8000:8000"
     depends_on:
       - rabbitmq
+    environment:
+      - RABBITMQ_HOST=4.180.68.139
+      - RABBITMQ_PORT=5672
+    networks:
+      - rabbitmq_network
 
   rabbitmq:
     image: "rabbitmq:3.8-management"
     ports:
       - "5672:5672"
       - "15672:15672"
+    networks:
+      - rabbitmq_network
 
   receiver:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.receiver  # Specify the correct Dockerfile for Receiver
     depends_on:
       - rabbitmq
+    networks:
+      - rabbitmq_network
+
+networks:
+  rabbitmq_network:
+    driver: bridge

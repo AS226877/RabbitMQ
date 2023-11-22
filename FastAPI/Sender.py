@@ -1,10 +1,17 @@
+import os
+
 from fastapi import FastAPI, HTTPException
 import pika
 
 app = FastAPI()
 
 # Establish a connection to the RabbitMQ server
-connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq'))
+# Get RabbitMQ connection details from environment variables
+rabbitmq_host = os.getenv("RABBITMQ_HOST", "localhost")
+rabbitmq_port = int(os.getenv("RABBITMQ_PORT", 5672))
+
+# Establish connection
+connection = pika.BlockingConnection(pika.ConnectionParameters(rabbitmq_host, rabbitmq_port))
 channel = connection.channel()
 
 # Declare a queue named 'operations'

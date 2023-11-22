@@ -1,3 +1,5 @@
+import os
+
 import pika
 from datetime import datetime
 
@@ -65,7 +67,12 @@ def callback(ch, method, properties, body):
 
 
 # Establish a connection to the RabbitMQ server
-connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq'))
+# Get RabbitMQ connection details from environment variables
+rabbitmq_host = os.getenv("RABBITMQ_HOST", "localhost")
+rabbitmq_port = int(os.getenv("RABBITMQ_PORT", 5672))
+
+# Establish connection
+connection = pika.BlockingConnection(pika.ConnectionParameters(rabbitmq_host, rabbitmq_port))
 channel = connection.channel()
 
 # Declare the 'operations' queue
