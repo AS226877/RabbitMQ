@@ -7,7 +7,7 @@ app = FastAPI()
 
 # Establish a connection to the RabbitMQ server
 # Get RabbitMQ connection details from environment variables
-rabbitmq_host = os.getenv("RABBITMQ_HOST", "localhost")
+rabbitmq_host = os.getenv("RABBITMQ_HOST", "172.17.0.1")
 rabbitmq_port = int(os.getenv("RABBITMQ_PORT", 5672))
 
 # Establish connection
