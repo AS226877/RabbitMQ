@@ -1,5 +1,5 @@
 from fastapi.testclient import TestClient
-from Sender import app
+from FastAPI.Sender import app
 
 
 def test_calculate_sum():
