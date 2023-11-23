@@ -10,7 +10,8 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      VERSION: 0.1  # Initial version
+      INITIAL_VERSION: 0.1
+      VERSION: ${{ env.INITIAL_VERSION }}
 
     steps:
       # Step 1: Checkout the repository code
