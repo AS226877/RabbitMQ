@@ -21,7 +21,10 @@ jobs:
       # Step 3: Read the version from the file or default to 0.1
       - name: Read version from file
         id: read-version
-        run: echo "::set-output name=version::$(cat version.txt 2>/dev/null || echo 0.1)"
+        run: |
+          version=$(cat version.txt 2>/dev/null || echo 0.1)
+          echo "version=$version" >> $GITHUB_ENV
+          echo "::set-output name=version::$version"
 
       # Step 4: Login to Azure Container Registry
       - name: Login to Azure Container Registry
@@ -48,8 +51,8 @@ jobs:
       - name: Increment version and save to file
         run: |
           new_version=$(echo "${{ steps.read-version.outputs.version }} + 0.1" | bc -l)
-          echo "new_version=$new_version" >> $GITHUB_STATE
-          echo "new_version=$new_version" >> $GITHUB_OUTPUT
+          echo "version=$new_version" >> $GITHUB_ENV
+          echo "::set-output name=version::$new_version"
 
       # Step 7: Logout from Azure Container Registry
       - name: Logout from Azure Container Registry
