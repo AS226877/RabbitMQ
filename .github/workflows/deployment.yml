@@ -28,7 +28,7 @@ jobs:
               # Generate the image name with version
               image_name="externalacraction.azurecr.io/${dir%/}"
               # Convert image_name to lowercase
-              image_name_lower=$(echo "$image_name" | awk '{print tolower($0)}')
+              image_name_lower=$(echo "$image_name" | tr '[:upper:]' '[:lower:]')
               image_versioned="${image_name}:${version}"
               # Debug - List contents of the current directory
               ls -l "$dir"
