@@ -27,7 +27,7 @@ jobs:
               version=$(date +"%y-%m-%d_%H-%M")
               image_name="externalacraction.azurecr.io/${dir%/}:${version}"
               # Convert image_name to lowercase
-              image_name_lower=$(echo "$image_name" | tr '[:upper:]' '[:lower:]')
+              image_name_lower=$(echo "$image_name" | awk '{print tolower($0)}')
               # Debug - List contents of the current directory
               ls -l "$dir"
               # Build the Docker image using Buildx and tag it with the dynamic version
