@@ -1,4 +1,4 @@
-name: Build and Push Docker Image
+name: Docker Build and Push
 
 on:
   push:
@@ -9,24 +9,18 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
 
-    env:
-      ACR_NAME: your-acr-name
-      IMAGE_NAME: your-image-name
-      TAG: latest
-
     steps:
-    - name: Checkout code
+    - name: Checkout repository
       uses: actions/checkout@v2
 
     - name: Login to Azure Container Registry
-      uses: azure/docker-login@v1
-      with:
-        login-server: ${{ secrets.ACR_NAME }}
-        username: ${{ secrets.ACR_USERNAME }}
-        password: ${{ secrets.ACR_PASSWORD }}
+      run: |
+        docker login -u ${{ secrets.ACR_USERNAME }} -p ${{ secrets.ACR_PASSWORD }} ${{ secrets.ACR_SERVER }}
 
-    - name: Build and push Docker image using docker-compose
+    - name: Build and push Docker image
       run: |
         docker-compose build
         docker-compose push
-      # This step uses docker-compose to build and push the images defined in your docker-compose.yml.
+
+    - name: Logout from Azure Container Registry
+      run: docker logout ${{ secrets.ACR_SERVER }}
