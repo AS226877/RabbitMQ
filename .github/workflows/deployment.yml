@@ -9,6 +9,9 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
 
+    env:
+      VERSION: 0.1
+
     steps:
       # Step 1: Checkout the repository code
       - name: Checkout code
@@ -18,28 +21,16 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
-      # Step 3: Read or set the version from/to a file
-      - name: Set or read version
-        id: version
-        run: |
-          if [ -f version.txt ]; then
-            version=$(cat version.txt)
-          else
-            version="0.1"
-          fi
-          echo "Version is $version"
-          echo "::set-output name=version::$version"
-
-      # Step 4: Login to Azure Container Registry
+      # Step 3: Login to Azure Container Registry
       - name: Login to Azure Container Registry
         run: echo "${{ secrets.ACR_PASSWORD }}" | docker login -u "${{ secrets.ACR_USERNAME }}" --password-stdin externalacraction.azurecr.io
 
-      # Step 5: Build and push Docker images for each directory
+      # Step 4: Build and push Docker images for each directory
       - name: Build and push Docker images
         run: |
           for dir in */; do
             if [ -f "$dir/Dockerfile" ]; then
-              image_name="externalacraction.azurecr.io/${dir%/}:${{ steps.version.outputs.version }}"
+              image_name="externalacraction.azurecr.io/${dir%/}:${VERSION}"
               # Convert image_name to lowercase
               image_name_lower=$(echo "$image_name" | tr '[:upper:]' '[:lower:]')
               # Debug - List contents of the current directory
@@ -51,13 +42,10 @@ jobs:
             fi
           done
 
-      # Step 6: Increment the version and save it to the file
-      - name: Increment version and save
-        run: |
-          new_version=$(awk -F '.' '{print $1"."$2+1}' <<< ${{ steps.version.outputs.version }})
-          echo "New version is $new_version"
-          echo "$new_version" > version.txt
+      # Increment version for the next run
+      - name: Increment version
+        run: echo "VERSION=$((VERSION + 1))" >> $GITHUB_ENV
 
-      # Step 7: Logout from Azure Container Registry
+      # Step 5: Logout from Azure Container Registry
       - name: Logout from Azure Container Registry
         run: docker logout externalacraction.azurecr.io
