@@ -48,8 +48,8 @@ jobs:
       - name: Increment version and save to file
         run: |
           new_version=$(echo "${{ steps.read-version.outputs.version }} + 0.1" | bc -l)
-          echo $new_version > version.txt
-          echo "::set-output name=new_version::$new_version"
+          echo "new_version=$new_version" >> $GITHUB_STATE
+          echo "new_version=$new_version" >> $GITHUB_OUTPUT
 
       # Step 7: Logout from Azure Container Registry
       - name: Logout from Azure Container Registry
