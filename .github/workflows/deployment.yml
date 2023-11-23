@@ -10,20 +10,34 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      # Step 1: Checkout the repository code
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
+      # Step 2: Set up Docker Buildx
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
 
-    - name: Login to Azure Container Registry
-      run: |
-        docker login -u ${{ secrets.ACR_USERNAME }} -p ${{ secrets.ACR_PASSWORD }} ${{ secrets.ACR_SERVER }}
+      # Step 3: Login to Azure Container Registry
+      - name: Login to Azure Container Registry
+        run: echo "${{ secrets.ACR_PASSWORD }}" | docker login -u "${{ secrets.ACR_USERNAME }}" --password-stdin externalacraction.azurecr.io
 
-    - name: Build and push Docker image
-      run: |
-        docker-compose build
-        docker-compose push
-
-    - name: Logout from Azure Container Registry
-      run: docker logout ${{ secrets.ACR_SERVER }}
+      # Step 4: Build and push Docker images for each directory
+      - name: Build and push Docker images
+        run: |
+          for dir in */; do
+            if [ -f "$dir/Dockerfile" ]; then
+              image_name="externalacraction.azurecr.io/${dir%/}:${version}"
+              # Convert image_name to lowercase
+              image_name_lower=$(echo "$image_name" | tr '[:upper:]' '[:lower:]')
+              # Debug - List contents of the current directory
+              ls -l "$dir"
+              # Build the Docker image using Buildx and tag it with the dynamic version
+              docker buildx build -t "$image_name_lower" "$dir" --load
+              # Push the Docker image to the Azure Container Registry
+              docker push "$image_name_lower"
+            fi
+          done
+      # Step 5: Logout from Azure Container Registry
+      - name: Logout from Azure Container Registry
+        run: docker logout externalacraction.azurecr.io
