@@ -9,6 +9,9 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
 
+    env:
+      VERSION: 0.1  # Initial version
+
     steps:
       # Step 1: Checkout the repository code
       - name: Checkout code
@@ -27,17 +30,16 @@ jobs:
         run: |
           for dir in */; do
             if [ -f "$dir/Dockerfile" ]; then
-              image_name="externalacraction.azurecr.io/${dir%/}:${version}"
-              # Convert image_name to lowercase
+              # Increment the version
+              export VERSION=$(awk -F'.' '{printf "%d.%d", $1, $2 + 1}' <<< "$VERSION")
+              image_name="externalacraction.azurecr.io/${dir%/}:${VERSION}"
               image_name_lower=$(echo "$image_name" | tr '[:upper:]' '[:lower:]')
-              # Debug - List contents of the current directory
               ls -l "$dir"
-              # Build the Docker image using Buildx and tag it with the dynamic version
               docker buildx build -t "$image_name_lower" "$dir" --load
-              # Push the Docker image to the Azure Container Registry
               docker push "$image_name_lower"
             fi
           done
+
       # Step 5: Logout from Azure Container Registry
       - name: Logout from Azure Container Registry
         run: docker logout externalacraction.azurecr.io
