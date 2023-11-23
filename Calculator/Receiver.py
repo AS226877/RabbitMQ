@@ -66,13 +66,12 @@ def callback(ch, method, properties, body):
         print(f"Error indexing to Elasticsearch: {e}")
 
 
-# Establish a connection to the RabbitMQ server
-# Get RabbitMQ connection details from environment variables
-rabbitmq_host = os.getenv("RABBITMQ_HOST", "172.17.0.1")
-rabbitmq_port = int(os.getenv("RABBITMQ_PORT", 5672))
+# read rabbitmq connection url from environment variable
+amqp_url = os.environ['AMQP_URL']
+url_params = pika.URLParameters(amqp_url)
 
-# Establish connection
-connection = pika.BlockingConnection(pika.ConnectionParameters(host=rabbitmq_host, port=rabbitmq_port, socket_timeout=30, heartbeat=30))
+# connect to rabbitmq
+connection = pika.BlockingConnection(url_params)
 channel = connection.channel()
 
 # Declare the 'operations' queue
