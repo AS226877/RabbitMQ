@@ -9,7 +9,7 @@ app = FastAPI()
 # Establish a connection to the RabbitMQ server
 # Get RabbitMQ connection details from environment variables
 # read rabbitmq connection url from environment variable
-amqp_url = os.environ['AMQP_URL']
+amqp_url = os.environ.get('AMQP_URL', 'amqp://localhost')
 url_params = pika.URLParameters(amqp_url)
 
 # connect to rabbitmq
