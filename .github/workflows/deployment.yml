@@ -24,20 +24,22 @@ jobs:
           for dir in */; do
             if [ -f "$dir/Dockerfile" ]; then
               # Generate a version based on date and time
-              version=$(date +"%y-%m-%d_%H-%M")
-              image_name="externalacraction.azurecr.io/${dir%/}:${version}"
+              version=$(date +"%d/%m/%y-%H_%M_%S")
+              # Generate the image name with version
+              image_name="externalacraction.azurecr.io/${dir%/}"
               # Convert image_name to lowercase
               image_name_lower=$(echo "$image_name" | awk '{print tolower($0)}')
+              image_versioned="${image_name}:${version}"
               # Debug - List contents of the current directory
               ls -l "$dir"
               # Build the Docker image using Buildx and tag it with the dynamic version
-              docker buildx build -t "$image_name_lower" "$dir" --load
+              docker buildx build -t "$image_versioned" "$dir" --load
               # Push the Docker image to the Azure Container Registry
-              docker push "$image_name_lower"
+              docker push "$image_versioned"
               
               # Tag the image as "latest" and push it
-              docker tag "$image_name_lower" "externalacraction.azurecr.io/${dir%/}:latest"
-              docker push "externalacraction.azurecr.io/${dir%/}:latest"
+              docker tag "$image_versioned" "$image_name_lower:latest"
+              docker push "$image_name_lower:latest"
             fi
           done
           
