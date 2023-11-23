@@ -18,4 +18,4 @@ COPY Sender.py .
 EXPOSE 8000
 
 # Command to run FastAPI
-CMD ["python", "Sender.py"]
+CMD ["uvicorn", "FastAPI.Sender:app", "--host", "0.0.0.0", "--port", "8000"]
