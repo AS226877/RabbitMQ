@@ -5,10 +5,12 @@ FROM python:3.12-slim
 WORKDIR /app
 
 # Copy only the necessary files for the Receiver
-COPY pyproject.toml poetry.lock ./
 RUN pip install pika
 
-COPY Calculator /app/Calculator
+# Without this setting, Python never prints anything out.
+ENV PYTHONUNBUFFERED=1
+
+COPY Receiver.py .
 
 # Command to run the Receiver
-CMD ["python", "/app/Calculator/Receiver.py"]
+CMD ["python", "Receiver.py"]
