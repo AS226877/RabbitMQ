@@ -24,7 +24,7 @@ jobs:
           for dir in */; do
             if [ -f "$dir/Dockerfile" ]; then
               # Generate a version based on date and time
-              version=$(date +"%y.%m.%d-%H:%M")
+              version=$(date +"%y-%m-%d_%H-%M")
               image_name="externalacraction.azurecr.io/${dir%/}:${version}"
               # Convert image_name to lowercase
               image_name_lower=$(echo "$image_name" | tr '[:upper:]' '[:lower:]')
