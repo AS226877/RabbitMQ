@@ -10,34 +10,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the repository code
       - name: Checkout code
         uses: actions/checkout@v2
-        with:
-          node-version: 16
 
-      # Step 2: Set up Docker Buildx
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
-        # Please check if there's a newer version that supports node16
 
-      # Step 3: Read the version from the file or default to 0.1
-      - name: Read version from file
-        id: read-version
-        run: |
-          version=$(cat version.txt 2>/dev/null || echo 0.1)
-          echo "version=$version" >> $GITHUB_ENV
-
-      # Step 4: Login to Azure Container Registry
       - name: Login to Azure Container Registry
         run: echo "${{ secrets.ACR_PASSWORD }}" | docker login -u "${{ secrets.ACR_USERNAME }}" --password-stdin externalacraction.azurecr.io
 
-      # Step 5: Build and push Docker images for each directory
       - name: Build and push Docker images
         run: |
           for dir in */; do
             if [ -f "$dir/Dockerfile" ]; then
-              image_name="externalacraction.azurecr.io/${dir%/}:${{ env.VERSION }}"
+              # Generate a dynamic version based on date and commit hash
+              version=$(date +"%Y%m%d%H%M%S")-${GITHUB_SHA:0:7}
+              image_name="externalacraction.azurecr.io/${dir%/}:${version}"
               # Convert image_name to lowercase
               image_name_lower=$(echo "$image_name" | tr '[:upper:]' '[:lower:]')
               # Debug - List contents of the current directory
@@ -46,15 +34,12 @@ jobs:
               docker buildx build -t "$image_name_lower" "$dir" --load
               # Push the Docker image to the Azure Container Registry
               docker push "$image_name_lower"
+              
+              # Tag the image as "latest" and push it
+              docker tag "$image_name_lower" "externalacraction.azurecr.io/${dir%/}:latest"
+              docker push "externalacraction.azurecr.io/${dir%/}:latest"
             fi
           done
-
-      # Step 6: Increment version and save to file
-      - name: Increment version and save to file
-        run: |
-          new_version=$(echo "${{ env.VERSION }} + 0.1" | bc -l)
-          echo "VERSION=$new_version" >> $GITHUB_ENV
-
-      # Step 7: Logout from Azure Container Registry
+          
       - name: Logout from Azure Container Registry
         run: docker logout externalacraction.azurecr.io
