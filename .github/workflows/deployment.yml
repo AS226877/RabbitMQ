@@ -1,0 +1,31 @@
+name: Deploy to Azure
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Deploy to Azure
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.AZURE_SERVER }}
+          username: ${{ secrets.AZURE_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            # Navigate to your project directory
+            cd /home/azureuser/Avikai/RabbitMQTests/RabbitMQ/
+
+            # Pull the latest changes from GitHub
+            git pull origin main
+
+            # Restart your Docker containers using docker-compose
+            docker-compose down
+            docker-compose up -d
