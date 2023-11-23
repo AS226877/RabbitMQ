@@ -44,7 +44,7 @@ jobs:
 
       # Increment version for the next run
       - name: Increment version
-        run: echo "VERSION=$((VERSION + 1))" >> $GITHUB_ENV
+        run: echo "VERSION=$(echo "$VERSION + 0.1" | bc -l)" >> $GITHUB_ENV
 
       # Step 5: Logout from Azure Container Registry
       - name: Logout from Azure Container Registry
