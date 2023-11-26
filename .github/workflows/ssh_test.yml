@@ -21,4 +21,4 @@ jobs:
         key: ${{ secrets.AZURE_PRIVATE_KEY }}
         port: 22
         script: |
-          docker images
+          sudo docker images
