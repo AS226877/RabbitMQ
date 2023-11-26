@@ -1,0 +1,37 @@
+name: Deploy to Azure
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Docker
+      uses: actions/setup-docker@v2
+
+    - name: Log in to Azure Container Registry
+      run: |
+        docker login acr-name.azurecr.io -u ${{ secrets.ACR_USERNAME }} -p ${{ secrets.ACR_PASSWORD }}
+
+    - name: Pull Docker image
+      run: |
+        docker pull acr-name.azurecr.io/your-image:tag
+
+    - name: SSH into Azure Server
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.AZURE_SERVER_IP }}
+        username: ${{ secrets.AZURE_SERVER_USERNAME }}
+        key: ${{ secrets.AZURE_PRIVATE_KEY }}
+        port: 22
+        script: |
+          docker stop your-container-name || true
+          docker rm your-container-name || true
+          docker run -d -p 80:80 --name your-container-name acr-name.azurecr.io/your-image:tag
